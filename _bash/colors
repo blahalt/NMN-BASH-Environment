@@ -1,0 +1,112 @@
+#
+# $Id$
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Colors
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+#
+# color definition for mac/bsd:
+#   a = black | b = red | c = green | d = brown | e = blue | f = magenta
+#   g = cyan | h = light grey | A = bold black | B = bold red
+#   C = bold green | D = bold brown | E = bold blue | F = bold magenta
+#   G = bold cyan | H = bold light grey | x = default foreground or background
+#
+#   1. directory | 2. symbolic link | 3. socket | 4. pipe | 5. executable
+#   6. block special | 7. character special | 8. executable with setuid bit
+#   9. executable with setgid bit | 10. dir writable to others, with sticky
+#   11. dir writable to others, without sticky bit
+#
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH colors definitions: ~/.bash/colors"
+
+# force TERM to xterm-color
+#export TERM=xterm-color
+
+# test if $TERM supports colors
+case "$TERM" in
+    xterm-color) color_are_supported=yes;;
+esac
+
+# if $TERM doesnt support colors, return
+[ -z "$color_are_supported" ] && return || unset $colors_are_supported
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - DirColor & FileColor"
+
+# set colors for files and filetypes
+case "$OS" in
+	linux*)
+		if [ -x /usr/bin/dircolors ]; then
+			if [ ! -f ~/.dircolors ]; then
+				dircolors --print-database > ~/.dircolors
+			fi
+			test -r ~/.dircolors && \
+				eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+		else
+			export LS_COLORS='di=1:fi=0:ln=31:pi=5:so=5:bd=5:cd=5:or=31:mi=0:ex=35:*.rb=90'
+		fi
+		;;
+	darwin*|*bsd*)
+		export CLICOLOR=1
+		export LSCOLORS='ExCxhxdxbxegedabaghbag'
+		;;
+	*)
+		;;
+esac
+
+if [ -x /usr/bin/dircolors ]; then
+	export LS_OPTIONS='--color=auto'
+	export GREP_OPTIONS='--color=auto' 
+	export GREP_COLOR='1;32' # or 1;37;41
+fi
+
+# set nice alias to check all colors currently set
+alias colorslist="set | egrep 'COLOR_\w*'"
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Color Definitions"
+
+#: set foreground colors
+COLOR_BLACK=$(tput setaf 0)
+COLOR_RED=$(tput setaf 1)
+COLOR_GREEN=$(tput setaf 2)
+COLOR_BROWN=$(tput setaf 3)
+COLOR_BLUE=$(tput setaf 4)
+COLOR_PURPLE=$(tput setaf 5)
+COLOR_CYAN=$(tput setaf 6)
+COLOR_GRAY=$(tput setaf 7)
+
+#: set empahsized colors
+COLOR_DARKGREY=$(tput bold ; tput setaf 0)
+COLOR_LIGHTRED=$(tput bold ; tput setaf 1)
+COLOR_LIGHTGREEN=$(tput bold ; tput setaf 2)
+COLOR_YELLOW=$(tput bold ; tput setaf 3)
+COLOR_LIGHTBLUE=$(tput bold ; tput setaf 4)
+COLOR_PINK=$(tput bold ; tput setaf 5)
+COLOR_LIGHTCYAN=$(tput bold ; tput setaf 6)
+COLOR_WHITE=$(tput bold ; tput setaf 7)
+
+#: set background colors
+COLOR_BLACKBG=$(tput setab 0)
+COLOR_REDBG=$(tput setab 1)
+COLOR_GREENBG=$(tput setab 2)
+COLOR_BROWNBG=$(tput setab 3)
+COLOR_BLUEBG=$(tput setab 4)
+COLOR_PURPLEBG=$(tput setab 5)
+COLOR_CYANBG=$(tput setab 6)
+COLOR_GRAYBG=$(tput setab 7)
+
+#: set no colors / transe
+NC=$(tput sgr0)
+COLOR_NC=$(tput sgr0)
+TRANSE=$(tput sgr0)
+COLOR_TRANSE=$(tput sgr0)
+
+

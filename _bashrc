@@ -1,0 +1,36 @@
+#!/bin/bash
+# $Id$
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - BASHRC
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+if [[ $NMN_DEBUG_PROFILE > 0 ]]; then
+	echo " Processing BASH environment: ~/.bashrc"
+	echo " Loading configuration files from ~/.bash/"
+fi
+
+#: Source all needed files
+source ~/.bash/functions
+source ~/.bash/config
+source ~/.bash/paths
+source ~/.bash/env
+source ~/.bash/colors
+source ~/.bash/prompt
+source ~/.bash/aliases
+source ~/.bash/completions
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Successfully loaded BASH environment"

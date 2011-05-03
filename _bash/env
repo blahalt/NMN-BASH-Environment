@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Environment Variables
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH environment files: ~/.bash/env"
+
+#: bash
+#export ENV=$HOME/.bashrc
+export SHELL=/bin/bash
+
+#: terminal
+export LINES=$(tput lines)	# terminal lines
+export COLUMNS=$(tput cols) # terminal columns
+
+#: history
+export HISTCONTROL=erasedups ignoreboth
+export HISTSIZE=20000
+export HISTIGNORE="&:bg:fg:ll:l:h:clear:ls:cd:cd ..:..*: *"
+export HISTTIMEFORMAT="%H:%M > "
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Source additional variables"
+
+#: load all files with environment variables from ~/.bash/env.d/ directory
+if [ -d ~/.bash/env.d ]; then
+	for file in ~/.bash/env.d/*; do
+		if [ -r $file ]; then
+			source $file
+		fi
+	done
+fi
+

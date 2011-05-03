@@ -1,0 +1,394 @@
+#!/bin/bash
+# $Id$
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Aliases
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH aliases: ~/.bash/aliases"
+
+# ---------------------------------------------------------------------------
+#  ::: HACKS & HELPERS :::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Hacks & Helpers"
+
+#: ugly hack! but w/o visudo doens'nt work on Darwin
+#alias sudo='sudo env PATH=$PATH'
+alias visudo='sudo'
+
+#: alias to show me the shell commands i recently use
+alias profileme="history | awk '{print \$2}' | awk 'BEGIN{FS=\"|\"}{print \$1}' | sort | uniq -c | sort -n | tail -n 20 | sort -nr"
+
+#: alias to get my external ip-adress
+#alias getExternalIP="$(curl http://ip.ngeorg.com/?raw)"
+
+#: alias to reload my BASH environment
+[[ "$OS" = linux ]] && \
+	alias reload='source ~/.profile && source ~/.bash/aliases' || \
+	alias reload='source ~/.bash_profile && source ~/.bash/aliases'
+
+# ---------------------------------------------------------------------------
+#  ::: ALIASES :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Default Aliases"
+
+#: shortcuts
+alias m='more'
+alias j='jobs -l'
+alias h='history'
+
+#: change dir
+alias .='cwd'
+alias ..='cd ..'
+alias ...='cd .. ; cd ..'
+alias ....='cd .. ; cd .. ; cd ..'
+alias cd..='cd ..'
+alias cwd='echo $PWD'
+
+#: colorized listing commands
+alias l='ls -CF ${LS_OPTIONS}'
+alias ll='ls -lah ${LS_OPTIONS}'		# my default listing command :-)
+alias la='ls -Al ${LS_OPTIONS}'			# show hidden files
+alias ls='ls -hF ${LS_OPTIONS}'			# add colors for filetype recognition
+alias lx='ls -lXB ${LS_OPTIONS}'		# sort by extension
+alias lk='ls -lSr ${LS_OPTIONS}'		# sort by size
+alias lc='ls -lcr ${LS_OPTIONS}'		# sort by change time
+alias lu='ls -lur ${LS_OPTIONS}'		# sort by access time
+alias lr='ls -lR ${LS_OPTIONS}'			# recursive ls
+alias lt='ls -ltr ${LS_OPTIONS}'		# sort by date
+alias lm='ls -al ${LS_OPTIONS} |more'	# pipe through 'more'
+#alias tree='tree -Csu'					# nice alternative to 'ls'
+
+#: show file space usage with human readable output
+alias df='df -h'
+alias du='du -h'
+alias duh="du -h --max-depth=1"
+alias duhh='du -cks * | sort -rn | head -11'
+alias ducks='du -cks * | sort -rn|head -11'		# Lists the size of all the folders and files
+
+#: file permission aliases
+alias mx='chmod a+x'
+alias 000='chmod 000'
+alias 644='chmod 644'
+alias 755='chmod 755'
+alias 775='chmod 775'
+alias chmodx='chmod +x'
+alias chmod775='chmod -R 775'
+alias chownweb='chown -R www-data:www-data'
+
+#: network related shortcuts
+alias ping='ping -c 10'
+alias ncftp="xtitle ncFTP ; ncftp"
+alias openports='netstat -nap --tcp4'
+alias ns='netstat -alnp --protocol=tcp4 | grep -v CLOSE_WAIT | cut -c-6,21-94 | tail +2'
+
+#: xterm and aterm related
+alias term='xterm -bg AntiqueWhite -fg Black &'
+alias aterm='aterm -ls -fg gray -bg black'
+alias termb='xterm -bg AntiqueWhite -fg NavyBlue &'
+alias termg='xterm -bg AntiqueWhite -fg OliveDrab &'
+alias termr='xterm -bg AntiqueWhite -fg DarkRed &'
+alias xterm='xterm -fb "" -bg black -fg gray -fa "Sans Mono" -fs 10 +sb -sl 3000 -g 80x50+1+1'
+alias xtop='xterm -fn 6x13 -bg LightSlateGray -fg black -e top &'
+alias xsu='xterm -fn 7x14 -bg DarkOrange4 -fg white -e su &'
+
+#: ncurses enhancements / beautifier 
+alias top='xtitle Processes on $HOST && top'
+alias make='xtitle Making $(basename $PWD) ; make'
+alias news='xterm -g 80x45 -e trn -e -S1 -N &'
+alias background='xv -root -quit -max -rmode 5'
+
+#: tail
+alias tailf='tail -f'
+[ "$OS" = linux ] && \
+	alias t='tailf /var/log/syslog' || \
+	alias t='tailf /var/log/system.log'
+
+#: find
+alias f='find . -iname'
+
+#: grep
+alias g='grep ${GREP_OPTIONS} -i'
+alias grep="LANG=C grep ${GREP_OPTIONS}"
+
+#: less (raw control characters)
+alias less='less -r'
+
+#: cat (print linenumbers)
+alias catn='cat -n'
+
+# cal (shows 3 months by default)
+alias cal='cal -3'
+
+# diff (normalize for distribution)
+alias diff='LC_ALL=C TZ=GMT0 diff -Naur'
+
+# lynx (with best settings for viewing html)
+alias lynx="lynx -force_html -width=${COLUMNS}"
+
+#: lsof
+alias lsofnames="lsof | awk '!/^\$/ && /\// { print \$9 }' | sort -u"
+
+#: housekeeping
+alias c='clear'
+alias clr='clear;echo "Currently logged in on $(tty), as $(whoami) in directory $(pwd)."'
+alias trash="rm -fr ~/.Trash" # empty local Trash
+alias cleanup_ds='find ./ -type f | grep .DS_Store | xargs rm'  # remove MAC .DS_Store files
+alias cleanup_tmp='rm -f *.tmp *.temp' 							# remove temp files
+alias cleanup_svn='find . -name '.svn' | xargs rm -Rf'			# remove Subversion files
+alias cleanup_libs="deborphan | xargs fink purge -y"			# remove unused packages and libs
+
+#: Emacs
+[[ -d /Applications/Emacs.app ]] && \
+    alias emacs='open -a /Applications/Emacs.app/' || \
+    alias emacs='vim'
+
+#: links2
+if [[ -x "$(which links2)" ]]; then
+	if [[ ! -x "$(which links)" ]]; then 
+		alias links='links2'
+	fi
+fi
+
+if [ "$OS" = linux ]; then
+	alias proc_all='ps -alx'
+else 
+	alias top='top -o cpu'
+fi 
+
+
+# ---------------------------------------------------------------------------
+#  ::: PACKAGE MANAGEMENT ::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Package-Management"
+
+if [ "$OS" = linux ]; then
+
+	alias installed_packages='dpkg -l'		# list all installed packets
+	alias is_installed='dpkg -l | grep'		# show if a package is installed
+	alias edit_sources='sudo vi /etc/apt/sources.list'	# edit sources.list
+
+	if [ -x /usr/bin/aptitude ]; then
+		# use Aptitude
+		alias apti='sudo aptitude install'
+		alias aptii='sudo aptitude install -y'
+		alias aptu='sudo aptitude update'
+		alias aptuu='sudo aptitude safe-upgrade'
+		alias aptr='sudo aptitude remove'
+		alias aptp='sudo aptitude purge'
+		alias aptd='sudo aptitude download'
+		alias apts='aptitude search'
+	else
+		# use apt-get
+		alias apti='sudo apt-get install'
+		alias aptii='sudo apt-get install -y'
+		alias aptu='sudo apt-get update'
+		alias aptuu='sudo apt-get upgrade'
+		alias aptr='sudo apt-get remove'
+		alias aptp='sudo apt-get purge'
+		alias aptd='sudo apt-get download'
+		alias apts='apt-cache search'
+	fi
+elif [ "$OS" = darwin ]; then
+    #
+    # Use MacPorts package manager
+    #
+    # Syntax: 
+    #   sudo port <action> [portname|pseudo-portname|port-url] [@version] [+-variant]
+    #
+    # Available actions (see manpage or action help for a full actions listing):
+    # ------------------------------------------------------------------------------
+    #   activate, archive, build, checksum, clean, configure, contents, deactivate, 
+    #   dependents, deps, distcheck, dmg, dpkg, extract, fetch, help, info, install, 
+    #   installed, lint, list, livecheck, load, mirror, notes, outdated, provides, 
+    #   quit, rpm, search, select, selfupdate, test, unarchive, uninstall, unload, 
+    #   upgrade, usage, variants, version, work
+    #
+    alias apti='sudo port install'
+    alias aptii='sudo port install -y'
+    alias aptu='sudo port -v selfupdate'
+    alias aptuu='sudo port -v upgrade'
+    alias aptua='sudo port -v upgrade all'
+    alias aptr='sudo port uninstall'
+    alias aptp='sudo port clean --all'
+    alias aptl='sudo port list'
+    alias aptt='sudo port test'
+    alias aptc='sudo port configure'
+	alias aptd='sudo port fetch'
+    alias apts='sudo port search'
+fi
+
+# ---------------------------------------------------------------------------
+#  ::: APPLICATIONS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Applications"
+
+if [ "$OS" = darwin ]; then
+	#: TextMate
+	alias tm='mate .'
+	alias m='~/bin/mate -r'
+	alias mw='~/bin/mate -rw'
+	alias matew='~/bin/mate -rw'
+	alias rc='mate -w ~/.bash_profile && echo "Sourcing ~/.bash_profile" && source ~/.bash_profile'
+	alias rtm="mate app config db lib public spec"
+	alias bashrc='mate ~/.bash_profile && echo "Sourcing ~/.bash_profile" && source ~/.bash_profile'
+	alias bundle='cd /Library/Application\ Support/TextMate/ && svn up'
+
+	#: FireFox
+	alias firefox='/Applications/Firefox.app/Contents/MacOS/firefox-bin -no-remote -P developer &'
+	alias ff='open -a firefox'
+
+	#: My personal wiki
+	alias wiki="cd ~/Documents/wiki; mate ."
+
+	#: alias for use unrar from UnRarX Application instead of /bin/unrar
+	alias unrar="/Applications/Utilities/UnRarX.app/Contents/Resources/unrar"
+
+	#: alias for vlc
+	alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
+
+	#: alias to start GoogleChrome DevChannel Version with TimelineAPI 
+	#: enabled (needed for SpeedTracer Extension)
+	#: (http://code.google.com/intl/de-DE/webtoolkit/speedtracer/get-started.html)
+	alias googledev='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --enable-extension-timeline-api &'
+fi
+
+#: Apache2 
+if [ -x "/etc/init.d/apache2" ]; then
+
+	alias a2r="restart apache2"
+	alias a2fr='service apache2 force-reload'
+	alias a2status='service apache2 status'
+
+	#: Returns all domains from apache configuration file
+	#function a2domains {
+	#	cat 00[123]* | egrep -i "ServerAlias|ServerName" | egrep -iv '#|server-center'&nbsp; | sed 's/ServerAlias//' | sed 's/ServerName//' | sed 's/www.//' | sed 's/*.//' | sed 's/ //'&nbsp; | sort | uniq
+	#}
+fi
+
+
+# ---------------------------------------------------------------------------
+#  ::: SERVER-ALIASES ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Remote Servers"
+
+#: local
+alias ws='ssh -l norman -p 666 ws.internet-marketing-agentur.com'
+alias atv='ssh -l frontrow 192.168.1.224'
+alias server='ssh -l root 192.168.1.150'
+
+#: remote
+alias amadeus='ssh -l root -p 666 amadeus.ngeorg.com'
+alias cch="ssh -l root -p 666 cch01a.ngeorg.com"
+alias cmt2="ssh -l root -p 666 cmt2.sp0t.de"
+alias cmt3="ssh -l root -p 666 cmt3.sp0t.de"
+alias mxs04="ssh -l norman -p 22 mxs04.maxiscoot.com"
+alias mxs07="ssh -l norman -p 22 mxs07.maxiscoot.com"
+alias srv1="ssh -l root srv1.internet-marketing-agentur.com"
+alias srv2="ssh -l root srv2.internet-marketing-agentur.com"
+alias srv3="ssh -l root srv3.internet-marketing-agentur.com"
+alias zwf="ssh -l root typo3.zwf.de"
+
+
+# ---------------------------------------------------------------------------
+#  ::: MySQL :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - MySQL"
+
+alias dbs="mysql -u root -p"
+alias mysql="mysql -u root -p"
+alias mqlistdatabases='mqrun "show databases"'
+alias mqlisttables='mqrun "show tables"'
+
+#: show differences colorized
+alias mqshowcommands="echo -e '${COLOR_PURPLE}Available commands: 
+   ${COLOR_BLUE}mq${COLOR_NC}list${COLOR_BLUE}databases${COLOR_NC}
+   ${COLOR_BLUE}mq${COLOR_NC}use${COLOR_BLUE}database${COLOR_NC}
+   ${COLOR_BLUE}mq${COLOR_NC}create${COLOR_BLUE}database${COLOR_NC}
+   ${COLOR_BLUE}mq${COLOR_NC}drop${COLOR_BLUE}database${COLOR_NC}
+   ${COLOR_BLUE}mq${COLOR_NC}list${COLOR_BLUE}tables${COLOR_NC}
+   ${COLOR_BLUE}mq${COLOR_NC}list${COLOR_BLUE}fields${COLOR_NC}
+   ${COLOR_BLUE}mq${COLOR_NC}run              ${COLOR_GRAY}Example: mqrun \"Select id From foo\"
+   ${COLOR_BLUE}mq${COLOR_NC}run${COLOR_BLUE}file${COLOR_NC}          ${COLOR_GRAY}Example: mqrunfile file_name
+   ${COLOR_BLUE}mq${COLOR_NC}run${COLOR_BLUE}file${COLOR_NC}to${COLOR_BLUE}file${COLOR_NC}    ${COLOR_GRAY}Example: mqrunfiletofile file_name out_file_name
+'"
+
+# ---------------------------------------------------------------------------
+#  ::: GIT :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Git"
+
+alias gc='git clone'
+
+# ---------------------------------------------------------------------------
+#  ::: SUBVERSION ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Subversion"
+
+alias se='svn export'
+alias sv='svn --username '${SVN_USER}
+alias svnc='svn ci -m'
+alias svadd='svn add'
+alias svnall='svnaddall;svndelall'
+alias svnlog="svn log --limit 10"
+alias svimport='sv import'
+alias svcheckout='sv checkout'
+alias svstatus='sv status'
+alias svupdate='sv update'
+alias svcommit='sv commit'
+alias svdelete='sv delete'
+alias svhelp='svn help' 
+alias svblame='sv blame'
+alias svdiff='sv diff'
+#alias svdiff='sv diff --diff-cmd fmdiff' # OS-X SPECIFIC
+alias svn-add-all-new-files='svn st|grep ^?|sed s/?//|xargs svn add $1'
+alias svnclear='find . -name .svn -print0 | xargs -0 rm -rf'
+alias svnaddall='svn status | grep "^\?" | awk "{print \$2}" | xargs svn add'
+alias svndelall='svn status | grep "^\!" | awk "{print \$2}" | xargs svn del'
+alias svstatusonserver='sv status --show-updates' # Show status here and on the server
+
+#alias svshowcommands="echo -e '${COLOR_BROWN}Available commands: 
+#    ${COLOR_GREEN}sv
+#    ${COLOR_GREEN}sv${COLOR_NC}help
+#    ${COLOR_GREEN}sv${COLOR_NC}import    ${COLOR_GRAY}Example: import ~/projects/my_local_folder http://svn.foo.com/bar
+#    ${COLOR_GREEN}sv${COLOR_NC}checkout  ${COLOR_GRAY}Example: svcheckout http://svn.foo.com/bar
+#    ${COLOR_GREEN}sv${COLOR_NC}status    
+#    ${COLOR_GREEN}sv${COLOR_NC}status${COLOR_GREEN}on${COLOR_NC}server
+#    ${COLOR_GREEN}sv${COLOR_NC}add       ${COLOR_GRAY}Example: svadd your_file
+#    ${COLOR_GREEN}sv${COLOR_NC}add${COLOR_GREEN}all${COLOR_NC}    ${COLOR_GRAY}Note: adds all files not in repository [recursively]
+#    ${COLOR_GREEN}sv${COLOR_NC}delete    ${COLOR_GRAY}Example: svdelete your_file
+#    ${COLOR_GREEN}sv${COLOR_NC}diff      ${COLOR_GRAY}Example: svdiff your_file
+#    ${COLOR_GREEN}sv${COLOR_NC}commit    ${COLOR_GRAY}Example: svcommit
+#    ${COLOR_GREEN}sv${COLOR_NC}update    ${COLOR_GRAY}Example: svupdate
+#    ${COLOR_GREEN}sv${COLOR_NC}get${COLOR_GREEN}info${COLOR_NC}   ${COLOR_GRAY}Example: svgetinfo your_file
+#    ${COLOR_GREEN}sv${COLOR_NC}blame     ${COLOR_GRAY}Example: svblame your_file
+#'"
+
+# ---------------------------------------------------------------------------
+#  ::: Spelling Typos ::: highly personnal :-) :::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Typos"
+
+alias xs='cd'
+alias vf='cd'
+alias moer='more'
+alias moew='more'
+alias kk='ll'
+alias pdw='pwd'
+alias mroe='more'
+alias öö='ll'
+alias ööo='ll'
+alias ää='ll'
+alias äää='ll'
+alias mroe='more'
+alias sl="ls ${LS_OPTIONS}"
+

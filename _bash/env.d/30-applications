@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Application variables
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+#
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH Application variables: ~/.bash/env.d/23-applications"
+
+#: editor
+export EDITOR='vim.nox'
+export VISUAL=${EDITOR}
+
+#: rar cli version
+#export RAR='-s -md1024'
+
+
+# ---------------------------------------------------------------------------
+#  ::: SUBVERSION ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+export SVN_USER=${USER}
+export SVN_EDITOR=${EDITOR}
+
+
+# ---------------------------------------------------------------------------
+#  ::: MySQL :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+# Available Environment Variables
+#
+#   CXX					The name of your C++ compiler (for running configure).
+#   CC					The name of your C compiler (for running configure).
+#   CFLAGS				Flags for your C compiler (for running configure).
+#   CXXFLAGS			Flags for your C++ compiler (for running configure).
+#   DBI_USER			The default user name for Perl DBI.
+#   DBI_TRACE			Trace options for Perl DBI.
+#   LD_RUN_PATH			Used to specify the location of libmysqlclient.so.
+#   MYSQL_DEBUG			Debug trace options when debugging.
+#   MYSQL_GROUP_SUFFIX	Option group suffix value (like specifying --defaults-group-suffix).
+#   MYSQL_HISTFILE		The path to the mysql history file. If set, it overrides $HOME/.mysql_history.
+#   MYSQL_HOME			The path to the directory in which the server-specific my.cnf file resides.
+#   MYSQL_HOST			The default host name used by the mysql command-line client.
+#   MYSQL_PS1			The command prompt to use in the mysql command-line client.
+#   MYSQL_PWD			The default password when connecting to mysqld. 
+#   MYSQL_TCP_PORT		The default TCP/IP port number.
+#   MYSQL_UNIX_PORT		The default Unix socket file name; used for connections to localhost.
+#
+export MYSQL_HOST="localhost"
+export MYSQL_TCP_PORT=3306
+export MYSQL_DEFAULT_DB=mysql
+export MYSQL_PS1="[\R:\m]\_\u\_\d\_$>\_"
+[[ "$OS" = linux ]] && \
+	export MYSQL_UNIX_PORT=/var/run/mysqld/mysqld.sock || \
+	export MYSQL_UNIX_PORT=/Applications/MAMP/tmp/mysql/mysql.sock
+
+# ---------------------------------------------------------------------------
+#  ::: ORACLE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+if [ -d /home/oracle ];
+then
+    #export PATH=${PATH}:/home/oracle/OraHome1/bin
+    export ORACLE_TERM="xterm"
+    export ORACLE_BASE="/home/oracle"
+    export ORACLE_HOME="/home/oracle/OraHome1"
+    export LB_LIBRARY_PATH="/home/oracle/OraHome1/lib/"
+fi
+
+
+

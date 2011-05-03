@@ -1,0 +1,60 @@
+#!/bin/bash
+# $Id$
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Profile
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+#  NOTE:
+#  When a interactive shell is started (eg. you open a new terminal session),
+#  the system runs the looks for the PROFILE configuration files and runs them
+#  in the order shown below:
+#    1. /etc/profile
+#    2. /etc/bashrc
+#    3. ~/.bash_profile (NOTE: debian or ubuntu looks for: ~/.profile)
+#    4. ~/.bashrc (NOTE: runs only if it's sourced in ~/.bash_profile)
+#
+#  When an interactive shell, that is NOT a login shell, is started (eg. you
+#  run "bash" command from inside a shell), the system runs ONLY the BASH
+#  configuration files:
+#    1. /etc/bashrc
+#    2. ~/.bashrc
+#
+#  If you run debian linux (or derivats like ubuntu) you have to rename the
+#  profile configuration file from ~/.bash_profile to ~/.profile !!!
+#
+# set +x
+
+#: version
+export NMN_BASH_ENVIRONMENT_VERSION='v.0.3.1'
+
+#: Enable/Disable debug functioniality (0=disabled/1=enabled)
+export NMN_DEBUG_PROFILE=0
+
+#: Propaganda
+echo -e "\n
+----------------------------------------------------------------------
+ ::::: NMN BASH ENVIRONMENT :::: ${NMN_BASH_ENVIRONMENT_VERSION} :::: <norm@ngeorg.com> ::::: 
+----------------------------------------------------------------------"
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Processing profile configuration file: ~/.profile"
+
+#: try to load ~/.bashrc and my ~/.localrc inheritance file
+if [ "$BASH" ];
+then
+	[[ -f ~/.bashrc ]] && source ~/.bashrc
+	[[ -f ~/.localrc ]] && source ~/.localrc
+fi
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo -e " Ok! All files processed.. HaveFun :-)\n"
+
+mesg n

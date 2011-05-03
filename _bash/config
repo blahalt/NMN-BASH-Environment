@@ -1,0 +1,72 @@
+#
+# $Id$
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Configuration Settings
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+#
+#  Tips to enhance my daily life/work (darwin only!) :-)
+# - AirPort (symlink airport alias for easier wifi handling):
+#   sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/sbin/airport
+#
+# - TextMate (symlink mate alias to open TextMate from console):
+#   sudo ln -s mate ~/bin/mate_wait
+#   (OR: sudo ln -s /Applications/TextMate.app/Contents/Resources/mate /usr/local/bin/mate)
+#
+# - NZBVortex (raise maximal memory usage on a very fast connections):
+#   defaults write com.NZBVortex.NZBVortex WriteCacheUpperLimitSize -int 500
+#
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH settings: ~/.bash/config"
+
+#: set filesystem behaviour
+umask 077			   				# fs settings
+ulimit -S -c 0						# Don't want any coredumps
+#ulimit -c unlimited   				# Let me have core dumps
+
+#: set BASH behaviour
+set +x
+set +o noclobber       				# prevents catting over file
+#set -o nounset         			# attempt to use undefined variable outputs error message and forces exit
+#set -o errexit  					# Exit on error
+#set -o ignoreeof      				# can't c-d out of shell
+#set -o notify         				# notify when jobs running in background terminate
+#set -o xtrace         				# useful for debuging
+shopt -s cdspell       				# auto fixes cd / spelling mistakes
+shopt -s cdable_vars   				# set the bash option so that no '$' is required when using the above facility
+shopt -s checkhash	   				#
+shopt -s checkwinsize  				# re-checks window size after window is resized
+shopt -s cmdhist	   				#
+shopt -s histappend	   				# append history to history file 
+shopt -s histreedit	   				#
+shopt -s histverify	   				# do not save duplicated cmds in history
+shopt -u mailwarn	   				#
+shopt -s sourcepath	   				#
+shopt -s dotglob	   				#
+shopt -s nocaseglob	   				#
+shopt -s extglob       				# necessary for programmable completion
+shopt -s no_empty_cmd_completion  	# bash>=2.04 only
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Completions"
+
+# bash completion settings (actually, these are readline settings)
+bind "set completion-ignore-case on" # note: bind used instead of sticking these in .inputrc
+bind "set bell-style none" # no bell
+bind "set show-all-if-ambiguous on" # show list automatically, without double tab
+
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Terminal"
+
+#: terminal 
+stty stop undef
+stty start undef
+
+

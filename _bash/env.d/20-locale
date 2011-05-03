@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - LOCALES
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH locales: ~/.bash/env.d/20-locales"
+
+#: language
+export LANG=de_DE.UTF-8
+export LC_ALL=de_DE.UTF-8
+
+#: localization
+export LC_CTYPE=de_DE.UTF-8
+export LC_NUMERIC=de_DE.UTF-8
+export LC_TIME=de_DE.UTF-8
+export LC_COLLATE=de_DE.UTF-8
+export LC_MONETARY=de_DE.UTF-8
+export LC_MESSAGES=de_DE.UTF-8
+export LC_PAPER=de_DE.UTF-8
+export LC_NAME=de_DE.UTF-8
+export LC_ADDRESS=de_DE.UTF-8
+export LC_TELEPHONE=de_DE.UTF-8
+export LC_MEASUREMENT=de_DE.UTF-8
+export LC_IDENTIFICATION=de_DE.UTF-8
+
+#: timezone
+export TZ='Europe/Berlin'
+
+#: timeformat
+[[ "$OS" = linux ]] && \
+	export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n' || \
+	export TIMEFORMAT=$'\nreal\t%3lR\nuser\t%3lU\nsys%3lS'
+

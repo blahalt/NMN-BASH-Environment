@@ -1,0 +1,24 @@
+#
+# $Id$
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Logout
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+
+#: be verbose if $NMN_DEBUG_PROFILE larger than 0 (default)
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Processing BASH logout file: ~/.bash_logout"
+
+#: clear the console when logging out
+if [ "$SHLVL" = 1 ]; then
+    [ -x /usr/bin/clear_console ] && /usr/bin/clear_console -q
+fi

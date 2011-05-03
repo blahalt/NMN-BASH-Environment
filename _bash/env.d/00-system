@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - System Variables
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing ENV system variables: ~/.bash/env.d/00-system"
+
+#: os
+export OS=$(uname -s | sed -e 's/  */-/g;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/')
+export OSVERSION=$(uname -r); export OSVERSION=$(expr "$OSVERSION" : '[^0-9]*\([0-9]*\.[0-9]*\)')
+
+#: system
+export KERNEL="`uname -smr`"
+export MACHINE=$(uname -m | sed -e 's/  */-/g;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/')
+export PLATFORM="$MACHINE-$OS-$OSVERSION"
+export INTERFACE="eth0:0"
+
+#: filesystem
+export FIGNORE="CVS:.svn:.git:.DS*" # ignore while tab-completion
+
+#: hostname
+export FQDN=$(uname -n)
+export HOSTNAME=$(hostname)
+
+#: system-infos
+export LOAD=$(w | grep up | awk '{print $10" "$11" "$12}')
+
+if [ "$OS" = linux ]; then
+	export IS_LINUX=1
+	export IP=$(/sbin/ip addr show eth0 | grep 'inet ' | cut -d t -f2 | cut -d / -f1 | cut -b 2-)
+	export CPU=$(grep "model name" /proc/cpuinfo | cut -d : -f2)
+	export RAM=$(cat /proc/meminfo | head -n 1 | awk '/[0-9]/ {print $2}')' MB';
+	export SPEED=$(grep "cpu MHz" /proc/cpuinfo | cut -d : -f2)' MHz';
+	export UPTIME=$(uptime | awk {'print $3'} | sed 's/:/ hours, /' | sed -r 's/,$/ minutes/')
+elif [ "$OS" = darwin ]; then
+	export IS_MAC=1
+else
+	export IS_UNKNOWN_OS=1
+fi

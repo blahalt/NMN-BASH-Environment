@@ -1,0 +1,55 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - User Variables
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing ENV user variables: ~/.bash/env.d/010-user"
+
+export USER=$(id -un)
+export GROUP="`id | sed 's/.* gid=[0-9]*(\([^)]*\)).*/\1/'`"
+export USERNAME=$(id -un)
+
+#export UMASK=
+#export UMASK_DIR=
+
+case ${USER} in
+	norm*|blah*)
+		export EMAIL="norm@ngeorg.com"
+		export COMPANY="(NMN) IT-Consulting & Development"
+		export COMPANY_URL="http://ngeorg.com"
+		;;
+	akem*|achim*)
+		export EMAIL="a.draeger@internet-marketing-agentur.com"
+		export COMPANY="Internet-Marketing-Agentur"
+		export COMPANY_URL="http://www.internet-marketing-agentur.com"
+		;;
+	root)
+		export EMAIL="root@${FQDN}"
+		export COMPANY_URL="http://${FQDN}"
+		;;
+	*)
+		export EMAIL="${USER}@${FQDN}"
+		export COMPANY_URL="http://${FQDN}"
+		;;
+esac
+
+# ----------------------------------------------------------------------------
+#  MailDir
+# ----------------------------------------------------------------------------
+if [ -d "~/Maildir" ]; then
+    export MAIL="~/Maildir" 
+	export MAILPATH=${MAIL} 
+	export MAILDIR=${MAIL}
+elif [ -f "/var/mail/${USER}" ]; then
+    export MAIL="/var/mail/$USER"
+	if [ -d "/var/vmail/${USER}" ]; then export VMAIL="/var/vmail/${USER}" ; fi
+fi

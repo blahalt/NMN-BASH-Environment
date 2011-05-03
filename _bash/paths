@@ -1,0 +1,43 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - PATHs
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH PATHs: ~/.bash/paths"
+
+# ----------------------------------------------------------------------------
+#  Modify $TMP, $PATH, $CDPATH and $MANPATH..
+# ----------------------------------------------------------------------------
+export TMP=/tmp
+
+#export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+#export CDPATH=/srv
+#export MANPATH=/usr/local/man:/usr/local/mysql/man:$MANPATH
+
+
+# ----------------------------------------------------------------------------
+#  My (custom) scripts folders
+# ----------------------------------------------------------------------------
+if [ -d ~/Scripts ]; then
+    export SCRIPTS=~/Scripts
+	export SCRIPTSDIR=${SCRIPTS}
+	export SCRIPTSPATH=${SCRIPTS}
+	export PATH=${PATH}:${SCRIPTS}
+elif [ -d ~/bin ]; then
+    export SCRIPTS=~/bin
+	export SCRIPTSDIR=${SCRIPTS}
+	export SCRIPTSPATH=${SCRIPTS}
+	export PATH=${PATH}:${SCRIPTS}
+fi
+
+
+

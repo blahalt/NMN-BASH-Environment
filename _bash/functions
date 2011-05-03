@@ -1,0 +1,408 @@
+# ---------------------------------------------------------------------------
+# (NMN) BASH Environment - Functions
+# ---------------------------------------------------------------------------
+# @version    $Revision$
+# @package    NMN-BASH-Environment
+# @subpackage Profile
+# @author     Norman Georg <norm@ngeorg.com>
+# @license    http://ngeorg.com/license.html
+# @copyright  (c) 2000-2010, Norman Georg, (NMN) IT-Consulting & Development
+# ---------------------------------------------------------------------------
+# ::::::::::::::::::: vim: set noai noet ru nu ml fenc=utf-8 ts=4 sw=4 tw=0:
+# ---------------------------------------------------------------------------
+# set +x
+[[ $NMN_DEBUG_PROFILE > 0 ]] && \
+	echo " Sourcing BASH functions: ~/.bash/functions"
+
+# ----------------------------------------------------------------------------
+#  ::: LIBRARIES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ----------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - External functions"
+
+#source ~/.bash/libs/nmn_functions.lib
+#source ~/.bash/libs/nmn_favdirs.lib
+#[[ $IS_MAC = 1 ]] && source  ~/.bash/libs/osx_trashcan.lib
+
+
+# ----------------------------------------------------------------------------
+#  ::: FUNCTIONS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ----------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Common"
+
+# Helper function to print a debug message to STDOUT
+function dbg ()
+{
+	if [ -n "${NMN_DEBUG_MESSAGE_COUNTER:+x}" ]; then 
+		export NMN_DEBUG_MESSAGE_COUNTER=1
+	else
+		let NMN_DEBUG_MESSAGE_COUNTER=${NMN_DEBUG_MESSAGE_COUNTER}+1
+		export $NMN_DEBUG_MESSAGE_COUNTER
+	fi
+	echo -e "\n${WHITE}(${NC}${RED}${NMN_DEBUG_MESSAGE_COUNTER}${NC}${WHITE})${NC} ${GREEN}${1}${NC}"
+}
+
+function ls_funcs () 
+{
+    local ME=$(echo $HOME/.bash/functions)
+	if [ $# -eq 1 ]; then
+    	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+        	echo "Shows the functions availables in $ME and some information about this"
+        	return
+    	fi
+	fi
+    echo
+    echo -e "--------------------------------------------------------------"
+    echo -e " ${COLOR_WHITE}(NMN) Available functions: ${COLOR_LIGHTRED}for infos, try '<funcname> -h'${NC}"
+    echo -e "--------------------------------------------------------------"
+    cat $ME | grep -n 'function' | cut -d '#' -f 1 | grep '()' | cut -d '(' -f 1
+    echo
+}
+
+function ls_alias () 
+{
+    local ME=$(echo $HOME/.bash/aliases)
+	if [ $# -eq 1 ]; then
+    	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+        	echo "Shows the aliases availables in $ME and some information about this"
+        	return
+    	fi
+	fi
+    echo
+    echo -e "--------------------------------------------------------------"
+    echo -e " ${COLOR_WHITE}(NMN) Available aliases:${NC}"
+    echo -e "--------------------------------------------------------------"
+    cat $ME | grep -n 'alias' | cut -d '#' -f 1 | grep '='
+    echo
+}
+
+function errmsg()
+{
+	date > /dev/stderr
+    hostname > /dev/stderr
+	echo "$@" > /dev/stderr
+	logger "$@"
+}
+
+# remind me, its important!
+# usage: remindme <time> <text>
+# e.g.: remindme 10m "omg, the pizza"
+function remindme()
+{
+    sleep $1 && zenity --info --text "$2" &
+}
+
+function futurama ()
+{
+	curl -Is slashdot.org | sed -ne '/^X-[FBL]/s/^X-//p'
+}
+
+#: GROWL - send notify message to local growl instance
+#function growl ()
+#{ 
+#    echo -e $'\e]9;'${1}'\007' ; 
+#    return  ; 
+#}
+
+function killhard ()
+{
+    kill -9 "$1"
+}
+
+function findportuser ()
+{
+    lsof -i :"$1"
+}
+
+
+function findstring ()
+{
+  if [ $# != 2 ]; then
+    echo "Usage:  findstring <dir> <string>"
+  else
+    find $1 -exec grep "$2" {} \; -print
+  fi
+}
+
+function findfile ()
+{
+  if [ $# != 2 ]; then
+    echo "Usage:  findfile <dir> <filename>"
+  else
+    find $1 -name "$2" -print
+  fi
+}
+
+function gns () # Case insensitive, excluding svn folders
+{ 
+  find . -path '*/.svn' -prune -o -type f -print0 | xargs -0 grep -I -n -e "$1"
+}
+
+#: DIFF - compare directories via diff
+function fs_CompareDirectories ()
+{
+    #: original shell command
+    # diff -qr dirA dirB | grep -v -e 'DS_Store' -e 'Thumbs' | sort > diffs.txt
+    
+    # final shell function
+    diff -qr $1 $2 | grep -v -e 'DS_STORE' -e 'Thumbs' | sort
+}
+
+#: LS - Listing pretty-printer
+function lll ()
+{ 
+    ls -l "$@"| egrep "^d" ; ls -lXB "$@" 2>&-| egrep -v "^d|total "; 
+}
+
+#: SHELL - TopTen Shell-commands
+function topten ()
+{
+    history | awk '{print $2}' | awk 'BEGIN {FS="|"}{print $1}' | sort | uniq -c | sort -n | tail | sort -nr
+}
+
+#: NetInfo - Get some network statistics
+function netinfo ()
+{
+	IFC
+    /sbin/ifconfig | awk /'inet addr/ {print $2}'
+    echo ""
+    /sbin/ifconfig | awk /'Bcast/ {print $3}'
+    echo ""
+    /sbin/ifconfig | awk /'inet addr/ {print $4}'
+    # /sbin/ifconfig | awk /'HWaddr/ {print $4,$5}'
+}
+
+function netlink () 
+{
+	sleep 30
+	ping -c 1 dino | grep -q '100% packet loss' && netlink
+}
+
+# bash history durchsuchen
+function hgrep ()
+{
+    history | grep $1 | sed '$d'
+}
+
+# ----------------------------------------------------------------------------
+#  ::: STRING :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ----------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Strings"
+
+function trim ()
+{
+	buffer=$1
+	buffer=${buffer##[[:space:]]}
+	buffer=${buffer%%[[:space:]]}
+	echo $buffer
+}
+
+# ----------------------------------------------------------------------------
+#  ::: DATE :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ----------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Date"
+
+date2stamp ()
+{
+    date --utc --date "$1" +%s
+}
+
+stamp2date ()
+{
+    date --utc --date "1970-01-01 $1 sec" "+%Y-%m-%d %T"
+}
+dateDiff ()
+{
+    case $1 in
+        -s)   sec=1;      shift;;
+        -m)   sec=60;     shift;;
+        -h)   sec=3600;   shift;;
+        -d)   sec=86400;  shift;;
+        *)    sec=86400;;
+    esac
+    dte1=$(date2stamp $1)
+    dte2=$(date2stamp $2)
+    diffSec=$((dte2-dte1))
+    if ((diffSec < 0)); then abs=-1; else abs=1; fi
+    echo $((diffSec/sec*abs))
+}
+
+# ----------------------------------------------------------------------------
+#  ::: MYSQL ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ----------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - MySQL"
+
+function mqusedatabase ()
+{
+	export MYSQL_DEFAULT_DB=$@
+}
+
+function mqrun ()
+{
+	mysql -u root -t -D ${MYSQL_DEFAULT_DB} -vvv -e "$@" | highlight blue '[|+-]'
+}
+function mqrunfile ()
+{
+	mysql -u root -t -vvv ${MYSQL_DEFAULT_DB} < $@ | highlight blue '[|+-]'
+}
+function mqrunfiletofile ()
+{
+	mysql -u root -t -vvv ${MYSQL_DEFAULT_DB} < $1 >> $2
+}
+function mqrunfiletoeditor ()
+{
+	mysql -u root -t -vvv ${MYSQL_DEFAULT_DB} < $1 | vim - 
+}
+
+function mqlistfields ()
+{
+	mqrun "describe $@"
+}
+
+function mqcreatedatabase ()
+{
+	mysqladmin -u root create $@
+	echo "$@ Created" | highlight blue '.*'
+}
+
+function mqdropdatabase ()
+{
+	echo Warning | highlight red '.*'
+	mysqladmin -u root drop $@ 
+}
+
+
+# ----------------------------------------------------------------------------
+#  ::: SUBVERSION :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ----------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Subversion"
+
+function svn_update ()
+{
+	svn update | highlight red "C .*" green "G .*" blue "A .*" yellow "D .*"
+}
+
+function svn_status ()
+{
+	svn status | highlight red "D .*" green "\? .*" blue "A .*"
+}
+
+function svn_rev ()
+{
+	local SVN=$(ls -a | grep ".svn")
+	if ([ ! -z "$SVN" ]); then
+		log " (r$(svn info | grep Revision | sed -e 's/Revision: //'))"
+	fi
+}
+
+#: shows file info and log from the rep
+function svn_getinfo ()
+{
+	sv info $@
+    sv log $@
+}
+
+
+# ---------------------------------------------------------------------------
+#  ::: OVERLAY COMMAND FUNCTIONS :::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Overlay Commands"
+
+#:  rm() - a wrapper for rm to move files to .TRASH folder instead
+#:  of removing them... 
+function rmToTrash ()
+{
+	local path
+	for path in "$@"; do
+		# ignore any arguments
+		if [[ "$path" = -* ]]; then :
+		else
+			local dst=${path##*/}
+			while [ -e ~/.Trash/"$dst" ]; 
+			do
+				# append the time if necessary
+				dst="$dst "$(date +%H-%M-%S)
+			done
+			mv "$path" ~/.Trash/"$dst"
+		fi
+	done
+}
+
+#: TERMINAL - Modify terminal xtitle
+function xtitle ()
+{
+	case "$TERM" in
+		*term | rxvt)
+			echo -n -e "\033]0;$*\007" ;;
+		*)
+		;;
+	esac
+}
+
+# MAN - Enhance man output
+function eman ()
+{
+	for i ; do
+		xtitle The $(basename $1|tr -d .[:digit:]) manual
+		command man -a "$i"
+	done
+}
+
+
+# ---------------------------------------------------------------------------
+#  ::: EVEN MORE FUNCTIONS :::::::::::::::::::::::::::::::::::::::::::::::::
+# ---------------------------------------------------------------------------
+[[ $NMN_DEBUG_PROFILE > 0 ]] && echo " - Deprecated functions"
+
+# function    rmd              { rm -fr $@; }
+# function    x                { exit    $@; }
+# function    z                { suspend $@; }
+# function    j                { jobs -l $@; }
+# function    osr              { shutdown -r now; }
+# function    osh              { shutdown -h now; }
+# function    p                { ${PAGER}  $@; }
+# function    e                { ${EDITOR} $@; }
+# function    c                { clear; }
+# function    h                { history $@; }
+# function    hc               { history -c; }
+# function    hcc              { hc;c; }
+# function    cx               { hc;x; }
+# function    ..               { cd ..; }
+# function    ll               { ls --color=auto -FAql $@; }
+# function    lf               { ls --color=auto -FAq  $@; }
+# function    mfloppy          { mount /dev/fd0 /mnt/floppy; }
+# function    umfloppy         { umount /mnt/floppy; }
+# function    mdvd             { mount -t iso9660 -o ro /dev/dvd /mnt/dvd; }
+# function    umdvd            { umount /mnt/dvd; }
+# function    mcdrom           { mount -t iso9660 -o ro /dev/cdrom /mnt/cdrom; }
+# function    umcdrom          { umount /mnt/cdrom; }
+# function    miso             { mount -t iso9660 -o ro,loop $@ /mnt/iso; }
+# function    umiso            { umount /mnt/iso; }
+# function    ff               { find . -name $@ -print; }
+# function    psa              { ps aux $@; }
+# function    psu              { ps  ux $@; }
+# function    lpsa             { ps aux $@ | p; }
+# function    lpsu             { ps  ux $@ | p; }
+# function    dub              { du -sclb $@; }
+# function    duk              { du -sclk $@; }
+# function    dum              { du -sclm $@; }
+# function    duh              { du -sclh $@; }
+# function    dfk              { df -PTak $@; }
+# function    dfm              { df -PTam $@; }
+# function    dfh              { df -PTah $@; }
+# function    dfi              { df -PTai $@; }
+# function    dmsg             { dmesg | p; }
+# function    kernfs           { p /proc/filesystems; }
+# function    shells           { p /etc/shells; }
+# function    lfstab           { p /etc/fstab; }
+# function    lxconf           { p /etc/X11/xorg.conf; }
+# 
+# if [ `id -u` -eq 0 ]
+# then
+#     function    efstab       { e /etc/fstab; }
+#     function    exconf       { e /etc/X11/xorg.conf; }
+#     function    txconf       { X -probeonly; }
+# fi
+# 
+
+
+
